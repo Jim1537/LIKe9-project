@@ -1,0 +1,31 @@
+#######################################
+# Syntax Coloring Map For jTRes
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+LK9thermo	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+set		KEYWORD2
+update		KEYWORD2
+getK		KEYWORD2
+getC		KEYWORD2
+getF		KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+THR_PIN		LITERAL1
+THR_INTERVAL	LITERAL1
+THR_VCC		LITERAL1
+THR_R		LITERAL1
+THR_RT0		LITERAL1
+THR_B		LITERAL1
+THR_T0		LITERAL1
