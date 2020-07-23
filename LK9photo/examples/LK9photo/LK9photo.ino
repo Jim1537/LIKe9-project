@@ -72,9 +72,11 @@ void loop() {
     In this case, internal timer will be bypassed and all the data will be collected immediately. Timer will be reseted to the time of last function call:
 
         dev1.update(true);
+
+        Function returns the boolean 'true' when timer will be ready and data has been collected.
   */
 
-  // Update readings and check if data collected...
+  // Update the timer and check if it is ready = data has been collected...
   if (dev1.update()) {
     /*
       If so, then you can get the values ​​by accessing the functions:

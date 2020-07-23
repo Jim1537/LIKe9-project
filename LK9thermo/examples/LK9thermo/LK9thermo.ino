@@ -74,24 +74,26 @@ void setup() {
 void loop() {
   /*
     Call dev1.update() function to update readings with the time interval you set. It doesent matter how often you will call the update function. Just be sure to call update() BEFORE read values.
-    
+
     Function returns boolean 'true' when the data will be collected.
 
     It is possible to override internal timer sending boolean 'true' as the parameter to the function.
     In this case, internal timer will be bypassed and all the data will be collected immediately. Timer will be reseted to the time of last function call:
 
         dev1.update(true);
+
+    Function returns the boolean 'true' when timer will be ready and data has been collected.
   */
 
-  // Update readings and check if data collected...
+  // Update the timer and check if it is ready = data has been collected...
   if (dev1.update()) {
     /* If so, then you can get the values ​​by accessing the functions:
-     
+
         dev1.getK()
         dev1.getC()
         dev1.getF()
         (Kelvin, Celsius or Fahrenheit, respectively)
-        
+
     */
     Serial.print("Temperature:\t");
     Serial.print(dev1.getK()); Serial.print("°K; \t");

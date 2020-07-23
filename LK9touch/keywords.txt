@@ -1,0 +1,26 @@
+#######################################
+# Syntax Coloring Map For LK9touch
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+LK9touch		KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+setMode			KEYWORD2
+setInterval		KEYWORD2
+setReset		KEYWORD2
+update			KEYWORD2
+getCounts		KEYWORD2
+resetCounts		KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+DEV_PIN			LITERAL1
