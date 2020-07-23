@@ -13,7 +13,7 @@
 /* Define some constants...
 
     Note:
-    You do not need to define these constants below if you are going to use its default values.
+    You do not need to define some or all of constants below if you are going to use their default values.
 */
 #define PHR_INTERVAL 3000   // Time interval between data collecting (millis; default is 3000 = 3 sec.)
 #define PHR_PIN A1          // Photoresistor control pin set as A1 (Any available analog pin can be used)

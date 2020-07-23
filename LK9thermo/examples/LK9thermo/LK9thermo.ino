@@ -57,13 +57,13 @@ void setup() {
 
     If you need to use your own specific parameters, you can do this for some or all of them (for each photoresistor declared above):
 
-    set(THR_INTERVAL);
+        set(THR_INTERVAL);
     Set Time Interval only. The rest of the parameters will be taken by defaults.
-    
-    set(THR_INTERVAL, SNS_THR_VCC);
+
+        set(THR_INTERVAL, SNS_THR_VCC);
     Set Time Interval and Control Voltage value. The rest of the parameters will be taken by defaults.
 
-    set(THR_INTERVAL, SNS_THR_VCC, SNS_THR_R);
+        set(THR_INTERVAL, SNS_THR_VCC, SNS_THR_R);
     Set Time Interval, Voltage and Pull-down resistor values. The rest of the parameters will be taken by defaults.
 
     Set ALL the parametrs manualy:
@@ -72,23 +72,26 @@ void setup() {
 }
 
 void loop() {
-  /* Call dev1.update() function to update readings with the time interval you set.
+  /*
+    Call dev1.update() function to update readings with the time interval you set. It doesent matter how often you will call the update function. Just be sure to call update() BEFORE read values.
+    
     Function returns boolean 'true' when the data will be collected.
-
-    It doesent matter how often you will call the update function. Just be sure to call update() BEFORE read values.
 
     It is possible to override internal timer sending boolean 'true' as the parameter to the function.
     In this case, internal timer will be bypassed and all the data will be collected immediately. Timer will be reseted to the time of last function call:
-    dev1.update(true);
+
+        dev1.update(true);
   */
 
   // Update readings and check if data collected...
   if (dev1.update()) {
     /* If so, then you can get the values ​​by accessing the functions:
-        getK()
-        getC()
-        getF()
-        (In Kelvin, Celsius or Fahrenheit, respectively)
+     
+        dev1.getK()
+        dev1.getC()
+        dev1.getF()
+        (Kelvin, Celsius or Fahrenheit, respectively)
+        
     */
     Serial.print("Temperature:\t");
     Serial.print(dev1.getK()); Serial.print("°K; \t");
