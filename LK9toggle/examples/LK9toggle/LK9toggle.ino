@@ -1,5 +1,5 @@
 /*
-    LK9toggle is a simple library, intended for driving of single digital pin (on/off/periodical).
+    LK9toggle is a simple library, intended for driving of single digital pin (on / off / auto by timer).
     This example shows how to use the LK9toggle functions.
 
     created Jul 2020
@@ -7,7 +7,7 @@
     ====================================================
 */
 
-// Include jPRes lib:
+// Include LK9toggle lib:
 #include "LK9toggle.h"
 
 /* For example let it be some LED on some digital pin
@@ -27,14 +27,16 @@ LK9toggle led1(DEV_PIN);
 */
 void setup() {
   Serial.begin(115200);
-  /* You can drive LED at any place in the code.
-      There are several commands available:
+  /*
+    You can drive LED at any place in the code.
+    There are several commands available:
+    
       on()            - turn LED on
       off()           - turn LED off
       timer(interval) - set LED blink with the interval (millis: 1000 = 1 sec.)
 
-      If you send boolean parameter 'true' to the on() or off() functions, LED will be updated instantly.
-      Otherwise, the state of LED will be changed during the update() cycle (see below).
+    If you send boolean parameter 'true' to the on() or off() functions, LED will be updated instantly.
+    Otherwise, the state of LED will be changed during the update() cycle (see below).
   */
 
   led1.on(true);
