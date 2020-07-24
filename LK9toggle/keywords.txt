@@ -1,0 +1,26 @@
+#######################################
+# Syntax Coloring Map For LK9toggle
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+LK9toggle	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+on	KEYWORD2
+off	KEYWORD2
+timer	KEYWORD2
+update	KEYWORD2
+isOn	KEYWORD2
+isTimer	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+DEV_PIN	LITERAL1
