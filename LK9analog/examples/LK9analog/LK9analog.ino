@@ -83,11 +83,15 @@ void loop() {
   // Update the timer and check if it is ready and data is collected...
   if (dev1.update()) {
     /*
-      If so, then you can get the values ​​by accessing the functions:
+      If so, then you can get the values ​​by accessing the functions get():
 
-          dev1.get();
+        dev1.get();
 
-      Function returns the value between 0 (low light level) and 255 (high light level).
+      Function returns the value between 0 and 255.
+
+      To get the raw value as is, use getRaw() function:
+
+        dev1.getRaw();
     */
     Serial.print("Light level:\t");
     Serial.println(dev1.get());

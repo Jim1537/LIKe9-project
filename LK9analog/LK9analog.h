@@ -27,7 +27,8 @@
 			void set(uint32_t interval, uint16_t limitMIN, uint16_t limitMAX);	// Set time interval and constrains
 		
 			bool update(bool force = false);					// Update sensor readings (true = override timer)
-			uint8_t get();								// Get reading
+			uint8_t get();								// Get adopted reading (0-223)
+			uint16_t getRaw();							// Get raw reading (0-1023)
 				
 		private:
 			// Some required working variables:
@@ -36,7 +37,8 @@
 			uint16_t _limitMIN = LK9ANLG_LIMIT_MIN;
 			uint16_t _limitMAX = LK9ANLG_LIMIT_MAX;
 		
-			uint8_t _light;
+			uint8_t _valueAdopted;
+			uint16_t _valueRaw;
 			uint32_t _now;
 			uint32_t _timer;
 	};

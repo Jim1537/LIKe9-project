@@ -18,8 +18,8 @@ bool LK9analog::update(bool force) {
 			if (_timer < _interval) break;
 		} while (_timer < _now - _interval);
 		
-		uint16_t _readings = constrain(analogRead(_pin), _limitMIN, _limitMAX);
-		_light = map(_readings, _limitMIN, _limitMAX, 0, 254);
+		_valueRaw = analogRead(_pin);
+		_valueAdopted = map(constrain(_valueRaw, _limitMIN, _limitMAX), _limitMIN, _limitMAX, 0, 254);
 		_timer = _now;
 		return true;
 	}
@@ -40,5 +40,8 @@ void LK9analog::set(uint32_t interval, uint16_t limitMIN, uint16_t limitMAX) {
 }
 
 uint8_t LK9analog::get() {
-	return _light;
+	return _valueAdopted;
+}
+uint16_t LK9analog::getRaw() {
+	return _valueRaw;
 }

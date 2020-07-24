@@ -15,6 +15,7 @@ LK9analog	KEYWORD1
 set		KEYWORD2
 update		KEYWORD2
 get		KEYWORD2
+getRaw		KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
