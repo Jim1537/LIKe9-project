@@ -1,4 +1,4 @@
-# LIKe9-project
+# "LIKe9" project
 Some basic/universal libraries created for my "LIKe9" project (http://like9.jimblog.me/)
 
 - **LK9analog**. To get readings from simple analog sensors by internal timer. Photoresistors, MQ-series sensors, etc.
