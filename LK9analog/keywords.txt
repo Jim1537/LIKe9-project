@@ -1,0 +1,26 @@
+#######################################
+# Syntax Coloring Map For LK9analog
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+LK9analog	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+set		KEYWORD2
+update		KEYWORD2
+get		KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+PHR_PIN		LITERAL1
+PHR_INTERVAL	LITERAL1
+PHR_LIMIT_MIN	LITERAL1
+PHR_LIMIT_MAX	LITERAL1
