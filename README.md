@@ -4,3 +4,5 @@ Some basic/universal libraries created for my "LIKe9" project (http://like9.jimb
 - **LK9analog**. To get readings from simple analog sensors by internal timer. Photoresistors, MQ-series sensors, etc.
 - **LK9thermo**. To get actual temperature from thermistor by internal timer (Kelvin, Celsius or Fahrenheit).
 - **LK9touch**. To get readings from capacitive touch sensor. Has internal counter of sequential touches.
+
+For more details on using libraries, see their Examples.
