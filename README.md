@@ -1,10 +1,10 @@
 # "LIKe9" project
-Some basic/universal libraries created for my "LIKe9" project (http://like9.jimblog.me/)
 
-- **LK9analog**.
-To get readings from simple analog sensors by internal timer. Photoresistors, MQ-series sensors, etc.
-- **LK9thermo**. To get actual temperature from thermistor by internal timer (Kelvin, Celsius or Fahrenheit).
-- **LK9touch**. To get readings from capacitive touch sensor. Has internal counter of sequential touches.
-- **LK9toggle**. To drive the single digital pin (on / off / auto by timer). E.g. blink by simple LED (with specific frequency) without any delays in the main loop().
+Набор простых, универсальных библиотек, созданных для проекта "LIKe9" (http://like9.jimblog.me/)
 
-For more details on using libraries, see their Examples.
+- **LK9analog**. Чтения аналоговых значений с внешних устройств. Втроенный таймер, фильтрация шумов, адаптация значений по диапазону.
+- **LK9thermo**. Чтение значений простого терморезистора. Встроенный таймер, перевод значений в Кельвины, Цельсии, Фаренгейты.
+- **LK9touch**. Обработка сигналов емкостного датчика прикосновения (capacitive touch sensor). Встроенный счетчик касаний с автоматическим сбросом по таймеру.
+- **LK9toggle**. Управление цифровым выходом платы: HIGH / LOW / автоматическое переключение с заданным интервалом по встроенному таймеру (без использования delay).
+
+Подробные инструкции по использованию библиотек см. в прилагающихся к ним примерах.
