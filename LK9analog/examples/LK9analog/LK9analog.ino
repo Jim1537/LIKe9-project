@@ -1,65 +1,84 @@
 /*
-    LK9analog is a simple library, intended for getting readings from one or several analog sensors by internal timer.
-    This example shows how to use the LK9analog functions.
+  LK9analog
+    Простая библиотека чтения аналоговых значений с внешних устройств.
+    (фоторезисторы, сенсоры серии MQ, простые микрофоны уровня шума и т.п. устройств)
 
-    It can be any device providing some data over analogue input on arduino board.
-    Let's say... I don't know... Let it be PHOTORESISTOR.
-
-    created Jul 2020
     by Vladimir Gorshunin aka Jim (http://jimblog.me)
-    ====================================================
+    для проекта LIKe9 (http://like9.jimblog.me)
+    Jun 2020
+
+  Особенности:
+    - Чтение значений с заданным интервалом (таймер сохраняет интервал даже при переполнении millis())
+    - Фильтрация значений / устранение шумов (упрощённый Калман для одномерного случая)
+    [спасибо, Alex Gyver: https://github.com/AlexGyver/GyverLibs]
+
+    - Настройка диапазона чтения
+    - Настройка параметров фильтрации
+
+    - Получение исходных значений (0-1023)
+    - Получение фильтрованных значений с фильтрацией (0-1023)
+    - Получение адаптированных фильтрованных значений (0-255)
 */
 
 // Include LK9analog lib:
 #include "LK9analog.h"
 
-/* Define some constants...
-
-    Note:
-    You do not need to define some or all of constants below if you are going to use their default values.
-*/
-#define PHR_INTERVAL 3000   // Time interval between data collecting (millis; default is 3000 = 3 sec.)
-#define PHR_PIN A0          // Photoresistor control pin set as A0 (Any available analog pin can be used)
-#define PHR_LIMIT_MIN 0     // Minimum value to constrain readings (default is 0).
-#define PHR_LIMIT_MAX 1023  // Maximum value to constrain readings (default is 1023).
-
-// Declare your photoresistor as 'dev1' object:
-LK9analog dev1(PHR_PIN);
 /*
-  You can add as many devices as you need (as long as you have enough analog signal pins on the board).
-  Each device will have its own timer and other settings.
-
-      LK9analog dev2(PHR_PIN2);
-      LK9analog dev3(PHR_PIN3);
-      LK9analog dev4(PHR_PIN4);
-      etc...
+  Определение констант...
+    Не обязательно определять те константы, значения которых будут использованы по умолчанию.
+    Для примера, все константы определены с их значениями по умолчанию.
 */
+
+#define PHR_PIN A0                // Вход (аналоговый) сигнала на плате
+
+#define PHR_INTERVAL 3000         // Интервал чтения значений (millis: 3000 = раз в 3 сек.)
+
+#define PHR_LIMIT_MIN 0           // Минимальный порог значений (подробнее см. ниже)
+#define PHR_LIMIT_MAX 1023        // Максимальный порог значений (подробнее см. ниже)
+
+#define LK9ANLG_FILTER_MSR 50.    // Разброс чтений для фильтра (диапазон шума)
+#define LK9ANLG_FILTER_ERR 50.    // Разброс оценки чтений для фильтра (подстраивается сам, но можно задать его явно)
+#define LK9ANLG_FILTER_GNE 0.5    // Коэффицент скорости изменения значений для фильтра (0.001-1 подбирается опытным путем, в зависимости от величины интервала чтения значений)
+
+/*
+  Объявление класса объекта с передачей ему номера входа сигнала на плате:
+      Можно объявить сколько угодно объектов (много разных датчиков и сенсоров).
+      Во всяком случае, пока хватает аналоговых входов на плате.
+      Каждый из объектов будет иметь свой собственный набор параметров.
+      Можно задать им всем разные интервалы чтения, разные параметры фильтрации, разные пороги чтения и т.п.
+*/
+LK9analog dev1(PHR_PIN);
 
 void setup() {
   Serial.begin(9600);
 
   /*
-    Actually, you can DO NOTHING here!
-    In this case, the time interval and other parameters will be taken by their default values (see the description of the constants above).
+    Если планируется использовать все значения параметров по их умолчанию,
+    то тут вообще можно ничего не делать.
+    Но, для примера, зададим все параметры вручную...
 
-    But if you want to set your own specific time interval, you can do it (for each photoresistor declared above):
+    Интервал чтения: раз в 3 сек.
   */
   dev1.set(PHR_INTERVAL);
 
   /*
-    By default, all the readings are constrained by full range of signal between 0 and 1023.
-    But in the real life this range is more narrow. To increase the resolution of the results, you are able to set
-    the actual range of reading.
+    По умолчанию, для чтения используется ВЕСЬ возможный диапазон значений от 0 до 1023.
+
+    Однако, в большинстве случаев, сенсор или датчик работают в более ограниченном
+    диапазоне (500-800, 400-700 и т.п.)
+
+    Для повышения "разрешения" адаптированных значений, можно задать минимальное и максимальное
+    пороговое значение для чтения.
 
         dev1.set(PHR_LIMIT_MIN, PHR_LIMIT_MAX);
 
-    In this case you will get a sample of values ​​from a smaller range, which will increase
-    the resolution of final readings.
+    В этом случае, все значения, которые окажутся ниже заданного минимального порогового значения будут приравнены к нему.
+    То же самое и со значениями, которые окажутся выше заданного максимального порогового значения.
   */
   dev1.set(PHR_LIMIT_MIN, PHR_LIMIT_MAX);
 
   /*
-    Also, you can set all the parameters by one call (time interval and constraints):
+    Все описанные выше параметры можно задать одновременно:
 
         dev1.set(PHR_INTERVAL, PHR_LIMIT_MIN, PHR_LIMIT_MAX);
   */
@@ -67,33 +86,49 @@ void setup() {
 }
 
 void loop() {
-  /* Call update() function to update readings.
-    It doesn't matter how often you will call the update() function, data will be collected with the interval you set above.
-    Just be sure to call update() BEFORE read values.
-    
-    Function returns boolean 'true' when the internal timer is ready and data is collected.
+  /* Для обновления значений используется функция update().
+    Не имеет значение, как часто она вызывается. В общем случае - чем чаще, тем лучше.
+    Непосредственно чтение значений и сопутствующие этому расчеты будут происходить с интервалом,
+    заданным для таймера. Во всех остальных случаях, код "пролетит" дальше без задержек.
 
-    It is possible to override internal timer sending boolean 'true' as the parameter to the function.
-    In this case, internal timer will be bypassed and all the data will be collected immediately. Timer will be reseted to the time of last function call:
+    Функция вернет логическое true, если в процессе вызова произошло чтение параметров.
 
-        dev1.update(true);
+    Если необходимо форсировать встроенный таймер объекта, необходимо вызвать функцию
+    обновления, с параметром true:
 
+          dev1.update(true);
+
+    В этом случае, внутренний таймер будет сброшен (и начнет отсчет интервала с начала), чтение
+    и сопутствующие расчеты значений произведутся НЕМЕДЛЕННО.
+
+
+    Обновить чтение параметров по таймеру (если функция вернула true, значит произошло чтение и обработка значений (истек заданный интервал)):
   */
-
-  // Update the timer and check if it is ready and data is collected...
   if (dev1.update()) {
     /*
-      If so, then you can get the values ​​by accessing the functions get():
+       Если произошло чтение и обработака значений, то их можно получить в адаптированном отфильтрованном виде (0-255):
 
-        dev1.get();
+           dev1.get();
 
-      Function returns the value between 0 and 255.
+      "Разрешение" адаптированного значения будет зависить от минимального и максимального порогов чтения
 
-      To get the raw value as is, use getRaw() function:
+      Считывать значения можно когда угодно и в любом месте кода. Но необходимо помнить, что новые значения
+      будут даны только после срабатывания внутреннего таймера. Во всех остальных случаях будет возвращено
+      последнее обработанное и сохраненное значение.
 
-        dev1.getRaw();
     */
     Serial.print("Light level:\t");
     Serial.println(dev1.get());
+    
+    /*
+      Дополнительно, всегда можно запросить "сырые" значения без обработки (0-1023):
+
+           dev1.getRaw();
+
+      Или "сырые" значения с отфильтрованным шумом:
+
+          dev1.getRawFiltered();
+    */
+
   }
 }
