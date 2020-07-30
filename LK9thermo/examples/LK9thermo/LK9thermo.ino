@@ -1,98 +1,118 @@
 /*
-    LK9thermo is a simple library, intended for getting readings from one or several thermistors by internal timer.
-    This example shows how to use the LK9thermo functions.
+  LK9thermo
+      by Vladimir Gorshunin aka Jim (http://jimblog.me)
+      для проекта LIKe9 (http://like9.jimblog.me)
 
-    created Jun 2020
-    by Vladimir Gorshunin aka Jim (http://jimblog.me)
-    ====================================================
+  Простая библиотека чтения простого терморезистора.
+
+  Особенности:
+      - Чтение значений с заданным интервалом (таймер сохраняет интервал даже при переполнении millis())
+      - Настройка под любой терморезистор
+      - Получение значений в Кельвинах, Цельсиях, Фаренгейтах
 */
 
-/* thermistor parameters from datasheet (example):
+/*
+  Пример параметров терморезистора, согласно спецификации
   RT0:  10000Ω
-        Thermistor base resistance.
+        Базовое сопротивление терморезистора
 
   B:    3977K (±0.75%)
-        'Beta coefficient' (B).
-        The B value is a material constant which is determined by the ceramicmaterial from which it is made.
-        It describes the gradient of the resistive (R/T) curve over a particular temperature range between two temperature points.
+        Beta-коэффициент (B).
+        Этот параметр зависит от характеристик материала из которого изготовлен терморезистор.
+        Всегда указан в спецификации.
 
   T0:   25C (±5%)
-        As the resistance varies with temperature, it is necessary to state the temperature at which the component has the required resistance.
-        Normally a temperature of 25°C is used and this may be stated as the value.
+        В силу того, что базовое сопротивление терморезистора напрямую зависит от его температуры, то
+        в спецификации всегда указывается при какой именно температуре терморезистор имеет указанное базовое сопротивление.
+        Обычно: 25°C
 */
 
 
-// Include LK9thermo lib:
+// Включение библиотеки LK9thermo в скетч:
 #include "LK9thermo.h"
 
-//  Now, define some constants:
-#define THR_PIN A1          // Thermistor control pin set as A1 (Any available analog pin can be used)
-/* Note:
-	You do not need to define some or all of constants below if you are going to use their default values.
+/*
+  Определение констант...
+    Не обязательно определять те константы, значения которых будут использованы по умолчанию.
+    Для примера, все константы определены с их значениями по умолчанию.
 */
-#define THR_INTERVAL 3000   // Time interval between data collecting (millis; default is 3000 = 3 sec.)
-#define THR_VCC 3.3         // Thermistor Control Voltage set as (VCC; default is 3.3)
-#define THR_R 10000         // Pull-down resistor value (Ω; default is 10000 = 10KΩ)
-#define THR_RT0 10000       // Resistance from the thermistor parameters above (Ω; default is 10000 = 10KΩ)
-#define THR_B 3977          // Temperature range (Kelvins) from the thermistor parameters above (default is 3977)
-#define THR_T0 25           // T0 from the thermistor parameters above (!!!IMPORTANT: Celsius!!! default is 25)
+#define THR_PIN A1          // Вход (аналоговый) сигнала на плате
 
-// Declare your thermistor as 'dev1' object:
-LK9thermo dev1(THR_PIN);
-/* Note:
-  You can add as many thermistors as you need (as long as you have enough analog signal pins on the board).
-  Each thermistor may have its own parameters, including different time intervals between readings
-    LK9thermo dev2(THR_PIN2);
-    LK9thermo dev3(THR_PIN3);
-    LK9thermo dev4(THR_PIN4);
-    etc...
+#define THR_INTERVAL 3000   // Интервал чтения значений (millis: 3000 = раз в 3 сек.)
+
+#define THR_VCC 3.3         // Вольтаж сигнала. Обычно, 3.3 вольта (по умолчанию) или 5 вольт. Зависит от платы контроллера.
+#define THR_R 10000         // Сопротивление понижающего резистора (Ω; 10000 = 10KΩ)
+#define THR_RT0 10000       // Сопротивление терморезистора (Ω; 10000 = 10KΩ)
+#define THR_B 3977          // Beta-коэффициент терморезистора (3977)
+#define THR_T0 25           // T0 терморезистора в Кельвинах (25С + 273.15)  
+
+/*
+  Объявление класса объекта с передачей ему номера входа сигнала на плате:
+      Можно объявить сколько угодно объектов (много разных датчиков).
+      Во всяком случае, пока хватает аналоговых входов на плате.
+      Каждый из объектов будет иметь свой собственный набор параметров.
+      Можно задать им всем разные интервалы чтения, разные параметры и т.п.
+
+        LK9thermo dev2(THR_PIN2);
+        LK9thermo dev3(THR_PIN3);
+        LK9thermo dev4(THR_PIN4);
+        и т.д.
+
 */
+LK9thermo dev1(THR_PIN);
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   /*
-    You can DO NOTHING here!
-    In this case, ALL the parameters will be taken by its default values (see the description of the constants above).
-
-    If you need to use your own specific parameters, you can do this for some or all of them (for each photoresistor declared above):
-
-        set(THR_INTERVAL);
-    Set Time Interval only. The rest of the parameters will be taken by defaults.
-
-        set(THR_INTERVAL, SNS_THR_VCC);
-    Set Time Interval and Control Voltage value. The rest of the parameters will be taken by defaults.
-
-        set(THR_INTERVAL, SNS_THR_VCC, SNS_THR_R);
-    Set Time Interval, Voltage and Pull-down resistor values. The rest of the parameters will be taken by defaults.
-
-    Set ALL the parametrs manualy:
+    Если планируется использовать все значения параметров по их умолчанию,
+    то тут вообще можно ничего не делать.
+    Но, для примера, зададим все параметры вручную:
   */
   dev1.set(THR_INTERVAL, THR_VCC, THR_R, THR_RT0, THR_B, THR_T0);
+
+  /*
+    Можно задать только некоторые параметры.
+
+    Настройка только интервала чтения (millis):
+        dev1.set(THR_INTERVAL);
+
+    Настройка интервала чтения и вольтажа сигнала:
+        dev1.set(THR_INTERVAL, THR_VCC);
+
+    Настройка интервала чтения, вольтажа сигнала и сопротивления понижающего резистора:
+        dev1.set(THR_INTERVAL, THR_VCC, THR_R);
+    
+  */
 }
 
 void loop() {
-  /*
-    Call dev1.update() function to update readings with the time interval you set. It doesent matter how often you will call the update function. Just be sure to call update() BEFORE read values.
+  /* Для обновления значений используется функция update().
+    Не имеет значение, как часто она вызывается. В общем случае - чем чаще, тем лучше.
+    Непосредственно чтение значений и сопутствующие этому расчеты будут происходить с интервалом,
+    заданным для таймера. Во всех остальных случаях, код "пролетит" дальше без задержек.
 
-    Function returns boolean 'true' when the data will be collected.
+    Функция вернет логическое true, если в процессе вызова произошло чтение параметров.
 
-    It is possible to override internal timer sending boolean 'true' as the parameter to the function.
-    In this case, internal timer will be bypassed and all the data will be collected immediately. Timer will be reseted to the time of last function call:
+    Если необходимо форсировать встроенный таймер объекта, необходимо вызвать функцию
+    обновления, с параметром true:
 
-        dev1.update(true);
+          dev1.update(true);
 
-    Function returns the boolean 'true' when timer will be ready and data has been collected.
+    В этом случае, внутренний таймер будет сброшен (и начнет отсчет интервала с начала), чтение
+    и сопутствующие расчеты значений произведутся НЕМЕДЛЕННО.
+
+
+    Обновить чтение параметров по таймеру (если функция вернула true, значит произошло чтение и обработка значений (истек заданный интервал)):
   */
-
-  // Update the timer and check if it is ready = data has been collected...
   if (dev1.update()) {
-    /* If so, then you can get the values ​​by accessing the functions:
+    /*
+       Если произошло чтение и обработака значений, то их можно получить значения при помощи функций:
 
         dev1.getK()
         dev1.getC()
         dev1.getF()
-        (Kelvin, Celsius or Fahrenheit, respectively)
+        (Кельвин, Цельсии, Фаренгейты, соответственно)
 
     */
     Serial.print("Temperature:\t");

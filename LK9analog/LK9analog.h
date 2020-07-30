@@ -1,6 +1,5 @@
 /*
 	LK9analog
-		Jun 2020
 		by Vladimir Gorshunin aka Jim (http://jimblog.me)
 		для проекта LIKe9 (http://like9.jimblog.me)
 
@@ -40,7 +39,7 @@
 
 	class LK9analog  {
 		public:
-			LK9analog(uint8_t pin);							// Объявление класса (control pin number)
+			LK9analog(uint8_t pin);							// Объявление класса (номер входа на плате)
 		
 			void set(uint32_t interval);						// Настройка интервала чтения (millis)
 			void set(uint16_t limitMIN, uint16_t limitMAX);				// Настройка минимального и максимального порогов чтения (0-1023)

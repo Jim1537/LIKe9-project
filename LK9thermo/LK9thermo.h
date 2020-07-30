@@ -1,9 +1,16 @@
 /*
- LK9thermo is a simple library, intended for getting readings from one or several thermistors by internal timer.
- See using instructions in the example program.
+	LK9thermo
+		Jun 2020
+		by Vladimir Gorshunin aka Jim (http://jimblog.me)
+		для проекта LIKe9 (http://like9.jimblog.me)
+
+Простая библиотека чтения простого терморезистора
  
- created Jun 2020
- by Vladimir Gorshunin aka Jim (http://jimblog.me)
+ Особенности:
+	- Чтение значений с заданным интервалом (таймер сохраняет интервал даже при переполнении millis())
+	- Настройка под любой терморезистор
+ 
+	- Получение значений в Кельвинах, Цельсиях, Фаренгейтах
  */
 
 #ifndef LK9thermo_h
@@ -14,31 +21,32 @@
 		#include "WProgram.h"
 	#endif
 	
-	// Default values:
-	#define JTRES_INTERVAL 3000								// Time interval between data collecting (millis; 3000 = 3 sec.)
-	#define JTRES_VCC 3.3									// Thermistor control voltage (3.3V)
-	#define JTRES_R 10000									// Pull-down resistor (Ω; 10000 = 10KΩ)
-	#define JTRES_RT0  10000								// Resistance from thermistor parameters (Ω; 10000 = 10KΩ)
-	#define JTRES_BC 3977									// Beta coefficient from thermistor parameters (3977)
-	#define JTRES_T0 298.15									// 'T0' from thermistor parameters, converted to Kelvin (25 + 273.15)	
+	// Умолчания:
+	#define JTRES_INTERVAL 3000		// Интервал чтения значений (millis 3000 = 3 sec.)
+	#define JTRES_VCC 3.3			// Вольтаж сигнала (3.3V)
+	#define JTRES_R 10000			// Сопротивление понижающего резистора (Ω; 10000 = 10KΩ)
+	#define JTRES_RT0  10000		// Сопротивление терморезистора (Ω; 10000 = 10KΩ)
+	#define JTRES_BC 3977			// Beta-коэффициент терморезистора (3977)
+	#define JTRES_T0 298.15			// 'T0' терморезистора в Кельвинах (25 + 273.15)	
 
 	class LK9thermo  {
 		public:
-			LK9thermo(uint8_t pin);							// Class declaration (control pin number)
+			LK9thermo(uint8_t pin);					// Объявление класса (номер входа на плате)
 		
-			void set(uint32_t interval);						// Set time interval only
-			void set(uint32_t interval, float VCC);					// Set time interval and operating voltage
-			void set(uint32_t interval, float VCC, uint16_t R);			// Set time interval, operating voltage and Pull-down resistor value
-			void set(uint32_t interval, float VCC, uint16_t R, uint16_t RT0, uint16_t BC, float T0); // Set time interval, operating voltage, Pull-down resistor value and RT0/K/T0 from thermistor datasheet
+			void set(uint32_t interval);				// Настройка интервала чтения (millis)
+			void set(uint32_t interval, float VCC);			// Настройка интервала чтения и вольтажа сигнала
+			void set(uint32_t interval, float VCC, uint16_t R);	// Настройка интервала чтения, вольтажа сигнала и сопротивления понижающего резистора
+			void set(uint32_t interval, float VCC, uint16_t R, uint16_t RT0, uint16_t BC, float T0);
+										// Настройка ВСЕХ параметров: интервал, вольтаж, сопротивление понижающего резистора, сопротивление терморезистора, beta, T0
 		
-			bool update(bool force = false);					// Update sensor readings (true = override timer)
+			bool update(bool force = false);			// Вызов обновления чтений (true - для форсирования встроенного таймера)
 		
-			float getK();								// Get reading, converted to Kelvin
-			float getC();								// Get reading, converted to Celsius
-			float getF();								// Get reading, converted to Fahrenheit
+			float getK();						// Получить температуру в Кельвинах
+			float getC();						// Получить температуру в Цельсиях
+			float getF();						// Получить температуру в Фаренгейтах
 		
 		private:
-			// Some required working variables:
+			// Немного локальных переменных:
 			uint8_t _pin;
 			uint32_t _interval  = JTRES_INTERVAL;
 			float _VCC = JTRES_VCC;
